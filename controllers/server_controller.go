@@ -239,8 +239,9 @@ func CreateJail(c echo.Context) error {
 	return c.JSON(http.StatusOK, resp)
 }
 
-// set jail quota
+// set jail quota using zfs
 func SetJailQuota(c echo.Context) error {
+	// must support ZFS & UFS
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"data":"to be dev",
 	})
@@ -301,6 +302,43 @@ func DestroyJail(c echo.Context) error {
 	}
 
 	cmd := exec.Command("sudo", "bastille", "destroy", req.JailName)
+	output, err := cmd.CombinedOutput()
+
+	resp := map[string]interface{}{
+		"output": string(output),
+	}
+
+	if err != nil {
+		resp["error"] = err.Error()
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+// clone jail
+type CloneJailRequest struct {
+	JailTemplate    string `json:"jail_template"`
+	JailTarget    string `json:"jail_target"`
+	IpAddress    string `json:"ip_address"`
+}
+
+func CloneJail(c echo.Context) error {
+	// bastille clone wp0 wp1 10.2.1.2
+	var req CloneJailRequest
+
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid JSON format",
+		})
+	}
+
+	if req.JailName == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "jail_name is required",
+		})
+	}
+
+	cmd := exec.Command("sudo", "bastille", "clone", req.JailTemplate, req.JailTarget, req.IpAddress)
 	output, err := cmd.CombinedOutput()
 
 	resp := map[string]interface{}{
