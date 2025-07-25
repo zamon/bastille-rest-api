@@ -19,7 +19,7 @@ func RegisterServerRoutes(e *echo.Echo) {
 	e.GET("/bastille-list-all", controllers.BastilleListAll)
 	e.GET("/bootstrap-list", controllers.BootstrapList)
 	e.POST("/create-jail", controllers.CreateJail)
-	e.POST("/set-jail-quota", controllers.SetJailQuota)
+	e.POST("/set-jail-quota-zfs", controllers.SetJailQuotaZfs)
 	e.POST("/stop-jail", controllers.StopJail)
 	e.POST("/destroy-jail", controllers.DestroyJail)
 }
