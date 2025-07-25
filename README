@@ -1,0 +1,71 @@
+#build into binary
+target FreeBSD:
+    GOOS=freebsd GOARCH=amd64 go build -o webmanager
+
+✅ Step 1: Pindahkan binary ke tempat permanen
+Misal taruh di /usr/local/bin:
+$ sudo cp ./webmanager /usr/local/bin/
+$ sudo chmod +x /usr/local/bin/webmanager
+
+✅ Step 2: Buat file rc.d script
+Buat file baru:
+$ sudo ee /usr/local/etc/rc.d/webmanager
+Isi dengan:
+#!/bin/sh
+
+# PROVIDE: webmanager
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+
+. /etc/rc.subr
+
+name="webmanager"
+rcvar=webmanager_enable
+
+command="/usr/local/bin/webmanager"
+pidfile="/var/run/${name}.pid"
+command_args="> /var/log/${name}.log 2>&1 & echo \$! > $pidfile"
+
+start_cmd="${name}_start"
+stop_cmd="${name}_stop"
+
+webmanager_start() {
+    echo "Starting ${name}..."
+    eval "${command} ${command_args}"
+}
+
+webmanager_stop() {
+    echo "Stopping ${name}..."
+    kill `cat $pidfile` && rm -f $pidfile
+}
+
+load_rc_config $name
+run_rc_command "$1"
+Simpan dan keluar.
+
+✅ Step 3: Buat log file dan PID folder
+$ sudo touch /var/log/webmanager.log
+$ sudo mkdir -p /var/run
+
+✅ Step 4: Aktifkan di rc.conf
+$ sudo sysrc webmanager_enable=YES
+
+✅ Step 5: Coba jalankan
+$ sudo service webmanager start
+Cek:
+$ ps aux | grep webmanager
+$tail -f /var/log/webmanager.log
+
+Stop service:
+$ sudo service webmanager stop
+
+prerequisites:
+- sudo
+- bastille 0.14
+- edit /usr/local/etc/sudoers, insert this line below
+<your username> ALL=(ALL) NOPASSWD:/usr/local/bin/bastille
+
+how to use:
+- upload binary to your home in FreeBSD machine. then edit .env:
+    - default app port is 8000
+    - Whitelist is used for ignoring request from other IP, set ip whitelist using your client machine ip and if you have multiple IP, separate with commas without space, for example IP_WHITELIST=1.1.1.1,2.2.2.2 etc. 
