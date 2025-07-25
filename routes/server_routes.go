@@ -20,4 +20,6 @@ func RegisterServerRoutes(e *echo.Echo) {
 	e.GET("/bootstrap-list", controllers.BootstrapList)
 	e.POST("/create-jail", controllers.CreateJail)
 	e.POST("/set-jail-quota", controllers.SetJailQuota)
+	e.POST("/stop-jail", controllers.StopJail)
+	e.POST("/destroy-jail", controllers.DestroyJail)
 }

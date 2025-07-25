@@ -18,10 +18,10 @@
 ## Package list
 URL: POST http://[your server IP]:8000/bastille-pkg-list
 
-Body Request:
+Body Request (json):
 {
-    "jail": "<your jail name>",
-    "package": "<package to search>"
+    "jail": "[your jail name]",
+    "package": "[package to search]"
 }
 
 response: list all available package in jail
@@ -36,7 +36,39 @@ URL: GET http://[your server IP]:8000/bootstrap-list
 
 response: all available bootstrap for jail
 
-## List all bootstrap
+## Ping
 URL: GET http://[your server IP]:8000
 
 response: pong
+
+## Create jail
+URL: POST http://[your server IP]:8000/create-jail
+
+Body Request (json):
+{
+    "jail_name": "[jail name]",
+    "ip_address": "[jail IP address]",
+    "release": "[release]"
+}
+
+response: json output
+
+## Stop jail
+URL: POST http://[your server IP]:8000/stop-jail
+
+Body Request (json):
+{
+    "jail_name": "[jail name]"
+}
+
+response: json output
+
+## Destroy jail
+URL: POST http://[your server IP]:8000/destroy-jail
+
+Body Request (json):
+{
+    "jail_name": "[jail name]"
+}
+
+response: json output

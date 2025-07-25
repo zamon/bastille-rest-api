@@ -66,8 +66,6 @@ func SuspendWebsite(c echo.Context) error {
 	})
 }
 
-
-
 type JailRequest struct {
 	Jail    string `json:"jail"`
 	Package string `json:"package"`
@@ -205,10 +203,40 @@ func BootstrapList(c echo.Context) error {
 }
 
 // create jail
+type CreateJailRequest struct {
+	JailName    string `json:"jail_name"`
+	IpAddress string `json:"ip_address"`
+	Release string `json:"release"`
+}
+
 func CreateJail(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"data":"to be dev",
-	})
+	// bastille create [jail name] [release] [ip address]
+	var req CreateJailRequest
+
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid JSON format",
+		})
+	}
+
+	if req.JailName == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "jail_name is required",
+		})
+	}
+
+	cmd := exec.Command("sudo", "bastille", "create", req.JailName, req.Release, req.IpAddress)
+	output, err := cmd.CombinedOutput()
+
+	resp := map[string]interface{}{
+		"output": string(output),
+	}
+
+	if err != nil {
+		resp["error"] = err.Error()
+	}
+
+	return c.JSON(http.StatusOK, resp)
 }
 
 // set jail quota
@@ -216,4 +244,72 @@ func SetJailQuota(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"data":"to be dev",
 	})
+}
+
+// stop jail
+type StopJailRequest struct {
+	JailName    string `json:"jail_name"`
+}
+
+func StopJail(c echo.Context) error {
+	var req DestroyJailRequest
+
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid JSON format",
+		})
+	}
+
+	if req.JailName == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "jail_name is required",
+		})
+	}
+
+	cmd := exec.Command("sudo", "bastille", "stop", req.JailName)
+	output, err := cmd.CombinedOutput()
+
+	resp := map[string]interface{}{
+		"output": string(output),
+	}
+
+	if err != nil {
+		resp["error"] = err.Error()
+	}
+
+	return c.JSON(http.StatusOK, resp)
+}
+
+// destroy jail
+type DestroyJailRequest struct {
+	JailName    string `json:"jail_name"`
+}
+
+func DestroyJail(c echo.Context) error {
+	var req DestroyJailRequest
+
+	if err := c.Bind(&req); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Invalid JSON format",
+		})
+	}
+
+	if req.JailName == "" {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "jail_name is required",
+		})
+	}
+
+	cmd := exec.Command("sudo", "bastille", "destroy", req.JailName)
+	output, err := cmd.CombinedOutput()
+
+	resp := map[string]interface{}{
+		"output": string(output),
+	}
+
+	if err != nil {
+		resp["error"] = err.Error()
+	}
+
+	return c.JSON(http.StatusOK, resp)
 }
