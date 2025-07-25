@@ -1,8 +1,8 @@
 # prerequisites:
 - sudo
 - bastille 0.14
-- edit /usr/local/etc/sudoers, insert this line below
-<your username> ALL=(ALL) NOPASSWD:/usr/local/bin/bastille
+- edit /usr/local/etc/sudoers, insert this line below:
+[your username] ALL=(ALL) NOPASSWD:/usr/local/bin/bastille
 
 # how to build from source:
 - mkdir build
