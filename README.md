@@ -5,6 +5,8 @@
 [your username] ALL=(ALL) NOPASSWD:/usr/local/bin/bastille
 
 # How to build from source:
+- clone this repo
+- cd to cloned directory
 - mkdir build
 - go mod tidy
 - go build -o build/server (or any name you like)
