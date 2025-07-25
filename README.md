@@ -16,25 +16,27 @@
 
 # Available end point
 ## Package list
-URL: POST http://<your server IP>:8000/bastille-pkg-list
+URL: POST http://[your server IP]:8000/bastille-pkg-list
+
 Body Request:
 {
     "jail": "<your jail name>",
     "package": "<package to search>"
 }
+
 response: list all available package in jail
 
 ## List all jail
-URL: GET http://<your server IP>:8000/bastille-list-all
+URL: GET http://[your server IP]:8000/bastille-list-all
+
 response: list all jail in machine
 
 ## List all bootstrap
-URL: GET http://<your server IP>:8000/bootstrap-list
+URL: GET http://[your server IP]:8000/bootstrap-list
+
 response: all available bootstrap for jail
 
 ## List all bootstrap
-URL: GET http://<your server IP>:8000
+URL: GET http://[your server IP]:8000
+
 response: pong
-
-
-# License
